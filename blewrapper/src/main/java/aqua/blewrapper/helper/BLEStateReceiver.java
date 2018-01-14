@@ -12,6 +12,8 @@ import static aqua.blewrapper.connectionstates.StateCodes.BluetoothTurnedOn;
 
 /**
  * Created by Saurabh on 03-01-2018.
+ *
+ * This is a LiveData for detecting the Bluetooth connectivity on device at runtime.
  */
 
 public class BLEStateReceiver extends LiveData {

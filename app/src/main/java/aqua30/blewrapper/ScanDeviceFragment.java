@@ -27,14 +27,19 @@ import static aqua.blewrapper.helper.BluetoothController.log;
 
 /**
  * Created by Saurabh on 03-01-2018.
+ *
+ * This dialog start scan for 10 seconds and list all the available BLE devices.
+ * Selecting any device would initiate callback for the parent activity/fragment
+ * and connection can be performed.
+ *
  */
 
 public class ScanDeviceFragment extends DialogFragment implements BluetoothViewContract.DiscoveryCallbacks {
 
-    ListView listView;
-    Button scanButton;
+    private ListView listView;
+    private Button scanButton;
     private LeDeviceListAdapter mLeDeviceListAdapter;
-    BluetoothManager bluetoothManager;
+    private BluetoothManager bluetoothManager;
     private ScanDeviceListener scanDeviceListener;
 
     public void setScanDeviceListener(ScanDeviceListener scanDeviceListener) {
@@ -50,8 +55,8 @@ public class ScanDeviceFragment extends DialogFragment implements BluetoothViewC
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setDialog();
         View view = inflater.inflate(R.layout.fg_scan, container, false);
-        listView = (ListView)view.findViewById(R.id.scan_list);
-        scanButton = (Button)view.findViewById(R.id.scan);
+        listView = view.findViewById(R.id.scan_list);
+        scanButton = view.findViewById(R.id.scan);
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -121,10 +126,6 @@ public class ScanDeviceFragment extends DialogFragment implements BluetoothViewC
 
         public BluetoothDevice getDevice(int position) {
             return mLeDevices.get(position);
-        }
-
-        public void clear() {
-            mLeDevices.clear();
         }
 
         @Override

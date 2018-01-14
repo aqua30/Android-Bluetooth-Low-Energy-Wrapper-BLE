@@ -6,6 +6,8 @@ import aqua.blewrapper.BuildConfig;
 
 /**
  * Created by Saurabh on 27-12-2017.
+ *
+ * Constants used in the wrapper.
  */
 
 public class StateCodes {

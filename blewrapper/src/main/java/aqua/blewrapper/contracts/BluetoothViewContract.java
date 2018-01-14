@@ -4,6 +4,8 @@ import android.bluetooth.BluetoothDevice;
 
 /**
  * Created by (saurabh) on 28-12-2017.
+ *
+ * Callback for views as per the BLE operations.
  */
 
 public interface BluetoothViewContract {

@@ -49,6 +49,10 @@ import static aqua.blewrapper.connectionstates.StateCodes.getScanPeriod;
 
 /**
  * Created by Saurabh on 27-12-2017.
+ *
+ * Implementation class for BluetoothManager.
+ * This class holds complete control of all operations.
+ * It manages the life cycle for BLE operations.
  */
 
 @SuppressWarnings("deprecation")
@@ -62,13 +66,17 @@ public class BluetoothController implements BluetoothManager, BLEServiceCallback
     private BluetoothViewContract.ConnectedDeviceStateCallbacks connectedDeviceStateCallbacks;
     private BLEServiceManager bleServiceManager;
     private BLEStateReceiver bleStateReceiver;
-
+    /* weak reference is provided to prevent any context leak. */
     private WeakReference<Activity> mActivity;
+    /* only required for devices running on M or above */
     private static GoogleApiClient googleApiClient;
-
+    /* the last connected device the wrapper communicated with */
     private Device lastConnectedDevice;
+    /* indicates if the scanning is started already or not. */
     private boolean isScanRequested = false;
+    /* indicates if a device is connected or not. */
     private boolean isDeviceConnected = false;
+    /* indicates that retry should be done if connection fails with the device. */
     private boolean retryPolicy = false;
     private Set<BluetoothDevice> scannedDevices;
     private Handler mHandler;
@@ -217,6 +225,7 @@ public class BluetoothController implements BluetoothManager, BLEServiceCallback
                         connectionStateCallbacks.gpsState(GPSDisabled);
                 }
                 break;
+            /* when Location permission granted */
             case RC_LOCATION:
                 if (resultCode == RESULT_OK) {
                     log("location permission granted");

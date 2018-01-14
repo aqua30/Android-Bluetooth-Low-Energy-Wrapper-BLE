@@ -11,6 +11,11 @@ import aqua.blewrapper.model.Device;
 
 /**
  * Created by Saurabh on 27-12-2017.
+ *
+ * This is main entry point for setting up and running the BLE communication.
+ * Main interaface which is used for all the BLE related operation.
+ * Any activity/fragment wants to communicate with BLE has to use this
+ * class object to do any BLE related task.
  */
 
 public interface BluetoothManager<T> {

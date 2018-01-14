@@ -35,21 +35,22 @@ import static aqua.blewrapper.helper.BluetoothController.log;
 /**
  * Created by Saurabh on 27-12-2017.
  */
-public class TestingActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks,
+public class BLEActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks,
         BluetoothViewContract.ConnectionStateCallbacks, BluetoothViewContract.CommunicationCallbacks, BluetoothViewContract.ConnectedDeviceStateCallbacks {
 
+    /* Views */
     private TextView dataView;
     private Button button_bleMode, button_manualMode;
-
+    /* objects for BLE wrapper */
     private GoogleApiClient mGoogleApiClient;
     private BluetoothManager bluetoothManager;
-
+    /* constants for demo working */
     public static final String deviceName = "deviceName";
     public static final String deviceAddress = "deviceAddress";
     public static final String Manual = "manual";
     public static final String BLE = "ble";
     public static final String mode = "mode";
-
+    /* variables */
     private StringBuilder dataBuilder;
     private String connectedDeviceName, connectedDeviceAddress;
     private String selectedMode;
@@ -59,22 +60,29 @@ public class TestingActivity extends AppCompatActivity implements EasyPermission
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ac_test);
         dataBuilder = new StringBuilder();
-        dataView = (TextView)findViewById(R.id.input_text);
-        button_bleMode = (Button)findViewById(R.id.bleMode);
-        button_manualMode = (Button)findViewById(R.id.manualMode);
-
+        dataView = findViewById(R.id.input_text);
+        button_bleMode = findViewById(R.id.bleMode);
+        button_manualMode = findViewById(R.id.manualMode);
+        /*  getting any presaved or pre connected device name and address
+        *   This details are automatically saved by the wrapper */
         connectedDeviceName = PreferenceClass.getInstance(this).getString(deviceName, "");
         connectedDeviceAddress = PreferenceClass.getInstance(this).getString(deviceAddress, "");
         selectedMode = PreferenceClass.getInstance(this).getString(mode, Manual);
-
+        /* only for demo */
         setMode();
-
+        /* required for ble wrapper */
         buildGoogleApiClient();
+        /* ble wrapper main object via which we'll do all the operations */
         bluetoothManager = new BluetoothController(this);
         bluetoothManager.setGoogleApiClient(mGoogleApiClient);
+        /* set this if you want to receive the callbacks related to bluetooth permission, gps state for
+        *  device > M, bluetooth on device is connected or not*/
         bluetoothManager.setConnectionCallbacks(this);
+        /* set this callback if you want to received the data from BLE device */
         bluetoothManager.setDataCallbacks(this);
+        /* set this callback if you want to know device is connected or disconnected during runtime */
         bluetoothManager.setConnectedDeviceStateCallbacks(this);
+        /* it checks all the required permission for Bluetooth activation */
         bluetoothManager.checkBluetoothRequirements();
     }
 
@@ -91,17 +99,19 @@ public class TestingActivity extends AppCompatActivity implements EasyPermission
         }
     }
 
+    /* fragment to scan the ble devices. */
     private void scan() {
         ScanDeviceFragment scanDeviceFragment = new ScanDeviceFragment();
         scanDeviceFragment.setScanDeviceListener(new ScanDeviceFragment.ScanDeviceListener() {
             @Override
             public void onDeviceSelected(BluetoothDevice device) {
+                /* once a device is connected, we can connect to it and stop scanning */
                 if (device.getName() == null)
                     connectedDeviceName = "Device";
                 connectedDeviceName = device.getName();
                 connectedDeviceAddress = device.getAddress();
-                PreferenceClass.getEditor(TestingActivity.this).putString(deviceName, connectedDeviceName).apply();
-                PreferenceClass.getEditor(TestingActivity.this).putString(deviceAddress, connectedDeviceAddress).apply();
+                PreferenceClass.getEditor(BLEActivity.this).putString(deviceName, connectedDeviceName).apply();
+                PreferenceClass.getEditor(BLEActivity.this).putString(deviceAddress, connectedDeviceAddress).apply();
                 setDataOnScreen("Connecting to " + connectedDeviceName + "...");
                 bluetoothManager.connectToDevice(device);
             }
@@ -137,6 +147,7 @@ public class TestingActivity extends AppCompatActivity implements EasyPermission
         dataView.setText("");
     }
 
+    /* must call onActivityResult for bluetoothManager object to set the required results */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -160,6 +171,7 @@ public class TestingActivity extends AppCompatActivity implements EasyPermission
     @Override
     protected void onResume() {
         super.onResume();
+        /* if we want to know bluetooth on device is turned on or off */
         bluetoothManager.registerStateDetection();
     }
 
@@ -263,13 +275,13 @@ public class TestingActivity extends AppCompatActivity implements EasyPermission
     public void bleDeviceConnectionState(int deviceConnectionState) {
         switch (deviceConnectionState) {
             case StateCodes.BluetoothTurnedOn:
-                Toast.makeText(TestingActivity.this, "BLE connected on device", Toast.LENGTH_SHORT).show();
+                Toast.makeText(BLEActivity.this, "BLE connected on device", Toast.LENGTH_SHORT).show();
                 setDataOnScreen("Bluetooth turned on");
                 bluetoothManager.retryConnection();
                 break;
             case StateCodes.BluetoothTurnedOff:
                 setDataOnScreen("Bluetooth turned off");
-                Toast.makeText(TestingActivity.this, "BLE disconnected on device", Toast.LENGTH_SHORT).show();
+                Toast.makeText(BLEActivity.this, "BLE disconnected on device", Toast.LENGTH_SHORT).show();
                 break;
         }
     }

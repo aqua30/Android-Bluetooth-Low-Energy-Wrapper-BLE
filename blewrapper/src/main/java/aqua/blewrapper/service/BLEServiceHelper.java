@@ -16,6 +16,10 @@ import static aqua.blewrapper.helper.BluetoothController.log;
 
 /**
  * Created by Saurabh on 28-12-2017.
+ *
+ * A helper class which manages the BLE Session and provides the callbacks to
+ * BluetoothManager.
+ *
  */
 
 public class BLEServiceHelper implements BLEServiceManager {

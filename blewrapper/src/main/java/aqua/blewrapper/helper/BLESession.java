@@ -31,6 +31,11 @@ import static aqua.blewrapper.helper.BluetoothController.log;
 
 /**
  * Created by Saurabh on 02-01-2018.
+ *
+ * A session is created for the device in connection. The connection lasts
+ * as long as this session lasts. For every connection, a new session is created.
+ * Once we are done with BLE connection , we destroy this session.
+ *
  */
 
 public class BLESession extends LiveData {
@@ -120,6 +125,9 @@ public class BLESession extends LiveData {
                     for (Map.Entry<UUID, ArrayList<BluetoothGattCharacteristic>> entry : servicemap.entrySet()) {
                         UUID key = entry.getKey();
                         ArrayList<BluetoothGattCharacteristic> value = entry.getValue();
+                        /* this part was specific to our requirement. One can modify or delete this part
+                        *  as per their requirement.
+                        * */
                         if(key.toString().contains("1809") && value.size() > 0) {
                             characteristic = value.get(1);
                             Log.e("characteristics", characteristic.getValue()+"");

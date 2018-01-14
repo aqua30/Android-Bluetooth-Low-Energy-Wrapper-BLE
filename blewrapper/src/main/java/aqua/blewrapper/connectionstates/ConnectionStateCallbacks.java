@@ -14,6 +14,10 @@ import static aqua.blewrapper.connectionstates.StateCodes.RetryConnection;
 
 /**
  * Created by Saurabh on 27-12-2017.
+ *
+ * It has all the selection code interfaces for correctly identify the
+ * values to be provided or action to be performed on various callbacks.
+ *
  */
 
 public class ConnectionStateCallbacks {
