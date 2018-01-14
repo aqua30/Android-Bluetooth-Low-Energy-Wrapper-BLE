@@ -3,7 +3,7 @@ package aqua.blewrapper.model;
 import android.content.Context;
 
 /**
- * Created by HawkSafety(saurabh@hawksafety.com) on 09-01-2018.
+ * Created by Saurabh on 09-01-2018.
  */
 
 public class Device {

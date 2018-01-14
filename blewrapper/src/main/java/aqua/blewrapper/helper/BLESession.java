@@ -30,7 +30,7 @@ import static aqua.blewrapper.connectionstates.StateCodes.ACTION_GATT_SERVICES_D
 import static aqua.blewrapper.helper.BluetoothController.log;
 
 /**
- * Created by HawkSafety(saurabh@hawksafety.com) on 02-01-2018.
+ * Created by Saurabh on 02-01-2018.
  */
 
 public class BLESession extends LiveData {

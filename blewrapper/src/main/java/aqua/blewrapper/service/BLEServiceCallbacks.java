@@ -3,7 +3,7 @@ package aqua.blewrapper.service;
 import aqua.blewrapper.connectionstates.ConnectionStateCallbacks;
 
 /**
- * Created by HawkSafety(saurabh@hawksafety.com) on 28-12-2017.
+ * Created by Saurabh on 28-12-2017.
  */
 
 public interface BLEServiceCallbacks {

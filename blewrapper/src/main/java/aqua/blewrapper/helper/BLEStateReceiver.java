@@ -11,7 +11,7 @@ import static aqua.blewrapper.connectionstates.StateCodes.BluetoothTurnedOff;
 import static aqua.blewrapper.connectionstates.StateCodes.BluetoothTurnedOn;
 
 /**
- * Created by HawkSafety(saurabh@hawksafety.com) on 03-01-2018.
+ * Created by Saurabh on 03-01-2018.
  */
 
 public class BLEStateReceiver extends LiveData {

@@ -15,7 +15,7 @@ import static aqua.blewrapper.connectionstates.StateCodes.EXTRA_DATA;
 import static aqua.blewrapper.helper.BluetoothController.log;
 
 /**
- * Created by HawkSafety(saurabh@hawksafety.com) on 28-12-2017.
+ * Created by Saurabh on 28-12-2017.
  */
 
 public class BLEServiceHelper implements BLEServiceManager {

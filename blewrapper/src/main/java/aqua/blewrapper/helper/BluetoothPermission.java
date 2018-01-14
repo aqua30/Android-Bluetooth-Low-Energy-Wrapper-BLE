@@ -27,7 +27,7 @@ import static aqua.blewrapper.connectionstates.StateCodes.LOGTAG;
 import static aqua.blewrapper.connectionstates.StateCodes.Request_Loction_Resolution;
 
 /**
- * Created by HawkSafety(saurabh@hawksafety.com) on 27-12-2017.
+ * Created by Saurabh on 27-12-2017.
  */
 
 public class BluetoothPermission {

@@ -33,7 +33,7 @@ import static aqua.blewrapper.connectionstates.StateCodes.RC_LOCATION;
 import static aqua.blewrapper.helper.BluetoothController.log;
 
 /**
- * Created by HawkSafety(saurabh@hawksafety.com) on 27-12-2017.
+ * Created by Saurabh on 27-12-2017.
  */
 public class TestingActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks,
         BluetoothViewContract.ConnectionStateCallbacks, BluetoothViewContract.CommunicationCallbacks, BluetoothViewContract.ConnectedDeviceStateCallbacks {

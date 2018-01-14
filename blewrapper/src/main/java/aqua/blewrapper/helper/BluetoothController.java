@@ -48,7 +48,7 @@ import static aqua.blewrapper.connectionstates.StateCodes.STATE_DISABLED;
 import static aqua.blewrapper.connectionstates.StateCodes.getScanPeriod;
 
 /**
- * Created by HawkSafety(saurabh@hawksafety.com) on 27-12-2017.
+ * Created by Saurabh on 27-12-2017.
  */
 
 @SuppressWarnings("deprecation")

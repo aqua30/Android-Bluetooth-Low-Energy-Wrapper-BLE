@@ -5,7 +5,7 @@ import android.Manifest;
 import aqua.blewrapper.BuildConfig;
 
 /**
- * Created by HawkSafety(saurabh@hawksafety.com) on 27-12-2017.
+ * Created by Saurabh on 27-12-2017.
  */
 
 public class StateCodes {

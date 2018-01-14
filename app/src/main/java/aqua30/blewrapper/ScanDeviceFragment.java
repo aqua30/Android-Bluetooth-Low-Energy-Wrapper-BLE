@@ -26,7 +26,7 @@ import static aqua.blewrapper.helper.BluetoothController.log;
 
 
 /**
- * Created by HawkSafety(saurabh@hawksafety.com) on 03-01-2018.
+ * Created by Saurabh on 03-01-2018.
  */
 
 public class ScanDeviceFragment extends DialogFragment implements BluetoothViewContract.DiscoveryCallbacks {
