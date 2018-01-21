@@ -35,9 +35,6 @@ public class StateCodes {
     public final static String ACTION_GATT_SERVICES_DISCOVERED = BuildConfig.APPLICATION_ID+".bluetooth.le.ACTION_GATT_SERVICES_DISCOVERED";
     public final static String ACTION_DATA_AVAILABLE = BuildConfig.APPLICATION_ID+".bluetooth.le.ACTION_DATA_AVAILABLE";
     public final static String EXTRA_DATA = BuildConfig.APPLICATION_ID+".bluetooth.le.EXTRA_DATA";
-    /* probe names */
-    public static final String Probe_US = "P250";
-    public static final String Probe_UK = "P125";
     /* bluetooth of device */
     public static final int BluetoothTurnedOn = 401;
     public static final int BluetoothTurnedOff = 402;

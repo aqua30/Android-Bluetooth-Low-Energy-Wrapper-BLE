@@ -159,7 +159,7 @@ public class BLESession extends LiveData {
 
     private void displayGattServices(List<BluetoothGattService> gattServices) {
         if (gattServices == null) return;
-        String uuid = null;
+        String uuid;
         String unknownServiceString = "Unknown Service";
         String unknownCharaString = "Unknown Characteristics";
         ArrayList<HashMap<String, String>> gattServiceData = new ArrayList<>();

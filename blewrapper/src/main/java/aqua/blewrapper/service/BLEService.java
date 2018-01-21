@@ -110,29 +110,16 @@ public class BLEService extends Service {
     private void broadcastUpdate(final String action, final BluetoothGattCharacteristic characteristic) {
         final Intent intent = new Intent(action);
         final byte[] data = characteristic.getValue();
+        StringBuilder stringBuilder = null;
         if (data != null && data.length > 0) {
-            final StringBuilder stringBuilder = new StringBuilder(data.length);
+            stringBuilder = new StringBuilder(data.length);
             for (byte byteChar : data)
                 stringBuilder.append(String.format("%02X ", byteChar));
+
+            /* @stringBuilder this object can directly be transmitted as the received data.
+             * And as per requirement, this data can be used to take out the related information. */
         }
-        int i = characteristic.getIntValue(17, 0);
-        float f2 = characteristic.getFloatValue(52, 1);
-        float f1 = f2;
-        if (f2 == 8388607.0F) {
-            f1 = 9999.0F;
-        }
-        String[] arrayOfString = String.valueOf(f1 + " " + i + " " + 1).split(" ");
-        String display = "";
-        if (i == 0) {
-            display = arrayOfString[0] + (char) 0x00B0 + "C";
-        } else if (i == 1) {
-            display = arrayOfString[0] + (char) 0x00B0 + "F";
-        }
-        log("characteristic uuid: " + characteristic.getUuid().toString());
-        if (characteristic.getUuid().equals(TEMPERATURE_MEASUREMENT)) {
-            log(display + " is recorded data" );
-        }
-        intent.putExtra(EXTRA_DATA, display);
+        intent.putExtra(EXTRA_DATA, stringBuilder != null ? stringBuilder.toString() : "");
         sendBroadcast(intent);
     }
 

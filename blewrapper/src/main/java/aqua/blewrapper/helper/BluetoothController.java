@@ -38,8 +38,6 @@ import static aqua.blewrapper.connectionstates.StateCodes.GPSDisabled;
 import static aqua.blewrapper.connectionstates.StateCodes.GPSEnabled;
 import static aqua.blewrapper.connectionstates.StateCodes.LOGTAG;
 import static aqua.blewrapper.connectionstates.StateCodes.PermissionGranted;
-import static aqua.blewrapper.connectionstates.StateCodes.Probe_UK;
-import static aqua.blewrapper.connectionstates.StateCodes.Probe_US;
 import static aqua.blewrapper.connectionstates.StateCodes.RC_LOCATION;
 import static aqua.blewrapper.connectionstates.StateCodes.Request_Enable_Bluetooth;
 import static aqua.blewrapper.connectionstates.StateCodes.Request_Loction_Resolution;
@@ -323,15 +321,12 @@ public class BluetoothController implements BluetoothManager, BLEServiceCallback
                 @Override
                 public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {
                     log("Device discoverd");
-                    if (device.getName() != null && device.getName().contains(Probe_UK) ||
-                            device.getName() != null && device.getName().contains(Probe_US)) {
-                        if (!scannedDevices.contains(device)) {
-                            log("device: "+ device.getName() + ", " + device.getAddress());
-                            if (discoveryCallbacks != null) {
-                                discoveryCallbacks.onDeviceDiscovered(device);
-                            }
-                            scannedDevices.add(device);
+                    if (!scannedDevices.contains(device)) {
+                        log("device: " + device.getName() + ", " + device.getAddress());
+                        if (discoveryCallbacks != null) {
+                            discoveryCallbacks.onDeviceDiscovered(device);
                         }
+                        scannedDevices.add(device);
                     }
                 }
             };
