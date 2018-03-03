@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import aqua.blewrapper.connectionstates.ConnectionStateCallbacks;
@@ -52,7 +53,7 @@ public class BLEActivity extends AppCompatActivity implements EasyPermissions.Pe
     public static final String mode = "mode";
     /* variables */
     private StringBuilder dataBuilder;
-    private String connectedDeviceName, connectedDeviceAddress;
+//    private String connectedDeviceName, connectedDeviceAddress;
     private String selectedMode;
 
     @Override
@@ -65,8 +66,6 @@ public class BLEActivity extends AppCompatActivity implements EasyPermissions.Pe
         button_manualMode = findViewById(R.id.manualMode);
         /*  getting any presaved or pre connected device name and address
         *   This details are automatically saved by the wrapper */
-        connectedDeviceName = PreferenceClass.getInstance(this).getString(deviceName, "");
-        connectedDeviceAddress = PreferenceClass.getInstance(this).getString(deviceAddress, "");
         selectedMode = PreferenceClass.getInstance(this).getString(mode, Manual);
         /* only for demo */
         setMode();
@@ -106,13 +105,7 @@ public class BLEActivity extends AppCompatActivity implements EasyPermissions.Pe
             @Override
             public void onDeviceSelected(BluetoothDevice device) {
                 /* once a device is connected, we can connect to it and stop scanning */
-                if (device.getName() == null)
-                    connectedDeviceName = "Device";
-                connectedDeviceName = device.getName();
-                connectedDeviceAddress = device.getAddress();
-                PreferenceClass.getEditor(BLEActivity.this).putString(deviceName, connectedDeviceName).apply();
-                PreferenceClass.getEditor(BLEActivity.this).putString(deviceAddress, connectedDeviceAddress).apply();
-                setDataOnScreen("Connecting to " + connectedDeviceName + "...");
+                setDataOnScreen("Connecting to " + bluetoothManager.getSavedDevice().getDeviceName() + "...");
                 bluetoothManager.connectToDevice(device);
             }
         });
@@ -123,9 +116,9 @@ public class BLEActivity extends AppCompatActivity implements EasyPermissions.Pe
         selectedMode = BLE;
         PreferenceClass.getEditor(this).putString(mode, selectedMode).apply();
         setMode();
-        if (!connectedDeviceAddress.isEmpty()) {
-            setDataOnScreen("Connecting to " + connectedDeviceName + "...");
-            bluetoothManager.connectToDevice(connectedDeviceAddress);
+        if (!bluetoothManager.getSavedDevice().getDeviceAddress().isEmpty()) {
+            setDataOnScreen("Connecting to " + bluetoothManager.getSavedDevice().getDeviceName() + "...");
+            bluetoothManager.connectToDevice(bluetoothManager.getSavedDevice().getDeviceAddress());
         } else {
             setDataOnScreen("Scan required");
             scan();
@@ -136,8 +129,9 @@ public class BLEActivity extends AppCompatActivity implements EasyPermissions.Pe
         selectedMode = Manual;
         PreferenceClass.getEditor(this).putString(mode, selectedMode).apply();
         setMode();
-        if (!connectedDeviceAddress.isEmpty()){
-            setDataOnScreen("Manual mode activated. Disconnected "+ connectedDeviceAddress);
+        if (!bluetoothManager.getSavedDevice().getDeviceAddress().isEmpty()){
+            setDataOnScreen("Manual mode activated. Disconnected "+
+                    bluetoothManager.getSavedDevice().getDeviceAddress());
         }
         bluetoothManager.disconnect();
     }
@@ -288,22 +282,23 @@ public class BLEActivity extends AppCompatActivity implements EasyPermissions.Pe
 
     @Override
     public void onDataReceived(String data) {
-        setDataOnScreen("Data received: " + data);
+        String temp = getTemperature(data);
+        setDataOnScreen("Data received: " + temp);
     }
 
     @Override
     public void connectedDeviceState(int connectedDeviceState) {
         switch (connectedDeviceState) {
             case StateCodes.DeviceConnected:
-                setDataOnScreen("Connected " + connectedDeviceName);
+                setDataOnScreen("Connected " + bluetoothManager.getSavedDevice().getDeviceName());
                 break;
             case StateCodes.DeviceDisconnected:
-                setDataOnScreen("Disconnected " + connectedDeviceName);
+                setDataOnScreen("Disconnected " + bluetoothManager.getSavedDevice().getDeviceName());
                 bluetoothManager.retryConnection();
                 break;
             case StateCodes.RetryConnection:
-                if (!connectedDeviceAddress.isEmpty() && selectedMode.equals(BLE))
-                    setDataOnScreen("Retrying connecting " + connectedDeviceName + "...");
+                if (!bluetoothManager.getSavedDevice().getDeviceAddress().isEmpty() && selectedMode.equals(BLE))
+                    setDataOnScreen("Retrying connecting " + bluetoothManager.getSavedDevice().getDeviceName() + "...");
                 checkPreviousState();
                 break;
         }
@@ -312,15 +307,15 @@ public class BLEActivity extends AppCompatActivity implements EasyPermissions.Pe
     /* Checking once the BLE is connected that*/
     private void checkPreviousState() {
         if (selectedMode.equals(BLE)) {
-            if (!connectedDeviceAddress.isEmpty()) {
-                setDataOnScreen("Last saved device " + connectedDeviceName);
+            if (!bluetoothManager.getSavedDevice().getDeviceAddress().isEmpty()) {
+                setDataOnScreen("Last saved device " + bluetoothManager.getSavedDevice().getDeviceName());
                 bluetoothManager.setDiscoveryCallbacks(new BluetoothViewContract.DiscoveryCallbacks() {
                     @Override
                     public void onDeviceDiscovered(BluetoothDevice device) {
-                        if (device.getAddress().equals(connectedDeviceAddress)) {
+                        if (device.getAddress().equals(bluetoothManager.getSavedDevice().getDeviceAddress())) {
                             bluetoothManager.stopScanning();
                             bluetoothManager.setDiscoveryCallbacks(null);
-                            setDataOnScreen("Connecting to " + connectedDeviceName + "...");
+                            setDataOnScreen("Connecting to " + bluetoothManager.getSavedDevice().getDeviceName() + "...");
                             bluetoothManager.connectToDevice(device);
                         }
                     }
@@ -328,7 +323,7 @@ public class BLEActivity extends AppCompatActivity implements EasyPermissions.Pe
                     @Override
                     public void onDeviceDiscoveryStopped() {
                         if (!bluetoothManager.isDeviceConnected()) {
-                            setDataOnScreen(connectedDeviceName + " is offline. Restart the device");
+                            setDataOnScreen(bluetoothManager.getSavedDevice().getDeviceName() + " is offline. Restart the device");
                         }
                     }
                 });
@@ -340,7 +335,58 @@ public class BLEActivity extends AppCompatActivity implements EasyPermissions.Pe
     }
 
     private void setDataOnScreen(String message) {
-        dataBuilder.append(message + "\n");
-        dataView.setText(dataBuilder.toString());
+        synchronized (message) {
+            log("received: " + message);
+            dataBuilder.append(message + "\n");
+            dataView.setText(dataBuilder.toString());
+        }
+    }
+
+    private String getTemperature(String message){
+        message = message.replace(" ","").trim();
+        final int msgLength = message.length();
+        message = message.substring(0, 12) + "0" + message.substring(13, msgLength);
+        ArrayList<Integer> byteArray = hexStringToByteArray(message, message.length());
+        return String.valueOf(toInt16_Temp(new int[] {byteArray.get(6), byteArray.get(7)}, 0) * 0.0625);
+    }
+
+    public static double toInt16_Temp(int[] bytes, int index) {
+
+        int high = bytes[index];
+        int low = bytes[index + 1];
+
+        int result = 0;
+        if (((short) high) > 7) {
+            // result = (short) ((xorHigh << 8) | (xorLow << 0));
+            result = (((0x0f ^ high) << 8) | ((0xff ^ low) << 0));
+            result += 1;
+            result = -result;
+
+// 			System.out.println( "temperature 1 : " + high + "," + low + " >> " + result);
+
+        } else {
+            result = ((0xff & high) << 8 | (0xff & low) << 0);
+
+        }
+// 		System.out.println( "temperature 2 : " + high+ "," + low + " >> "+ result);
+
+        return result;
+
+    }
+
+    public static ArrayList<Integer> hexStringToByteArray(String s, int len) {
+        ArrayList<Integer> d = new ArrayList<>();
+        try {
+            for (int i = 0; i < len; i += 2) {
+                try {
+                    d.add(Integer.parseInt(s.substring(i, i + 2), 16));
+                } catch (NumberFormatException e) {
+                    log(e.getMessage());
+                }
+            }
+        } catch (Exception e) {
+            log(e.getMessage());
+        }
+        return d;
     }
 }
